@@ -349,9 +349,6 @@ java -version
 # Should show Java 21 or higher
 ```
 
-## 👥 Contributors
-
-- Saren Sokmeak GIC-Ce20211376
 
 ## 📄 License
 
