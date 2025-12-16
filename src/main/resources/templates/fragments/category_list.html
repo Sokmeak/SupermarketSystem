@@ -1,0 +1,130 @@
+<div th:fragment="content">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <p class="text-muted mb-0">
+        <i class="fa-solid fa-info-circle"></i> Manage product categories and
+        organize your inventory
+      </p>
+    </div>
+    <div>
+      <a th:href="@{/categories/create}" class="btn btn-success me-2">
+        <i class="fa-solid fa-plus"></i> Create Category
+      </a>
+    </div>
+  </div>
+
+  <!-- Category Statistics -->
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card border-primary">
+        <div class="card-body text-center">
+          <i class="fa-solid fa-folder-open fa-2x text-primary mb-2"></i>
+          <h5 class="card-title text-muted mb-1">Total Categories</h5>
+          <h2 class="fw-bold text-primary mb-0" th:text="${categories.size()}">
+            0
+          </h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card border-success">
+        <div class="card-body text-center">
+          <i class="fa-solid fa-boxes-stacked fa-2x text-success mb-2"></i>
+          <h5 class="card-title text-muted mb-1">Active Products</h5>
+          <h2
+            class="fw-bold text-success mb-0"
+            th:text="${#lists.isEmpty(categories) ? 0 : #aggregates.sum(categories.![products.size()])}"
+          >
+            0
+          </h2>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="col-md-4">
+      <div class="card border-info">
+        <div class="card-body text-center">
+          <i class="fa-solid fa-layer-group fa-2x text-info mb-2"></i>
+          <h5 class="card-title text-muted mb-1">Main Categories</h5>
+          <h2
+            class="fw-bold text-info mb-0"
+            th:text="${#lists.size(categories.?[!#strings.contains(name, ' - ')])}"
+          >
+            0
+          </h2>
+        </div>
+      </div>
+    </div> -->
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th scope="col" width="5%">#</th>
+          <th scope="col" width="25%">Category Name</th>
+          <th scope="col" width="35%">Description</th>
+          <th scope="col" width="15%" class="text-center">Products</th>
+          <th scope="col" width="20%" class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="category, iterStat : ${categories}">
+          <td class="text-muted fw-semibold" th:text="${iterStat.count}"></td>
+          <td>
+            <span
+              th:if="${#strings.contains(category.name, ' - ')}"
+              class="ms-4"
+            >
+              <i class="fa-solid fa-arrow-turn-down-right text-muted me-2"></i>
+              <span
+                class="text-dark"
+                th:text="${#strings.substringAfter(category.name, ' - ')}"
+              ></span>
+            </span>
+            <span th:if="${!#strings.contains(category.name, ' - ')}">
+              <i class="fa-solid fa-folder text-primary me-2"></i>
+              <strong th:text="${category.name}"></strong>
+            </span>
+          </td>
+          <td>
+            <small class="text-muted" th:text="${category.description}"></small>
+          </td>
+          <td class="text-center">
+            <span
+              class="badge rounded-pill bg-primary"
+              th:text="${category.products.size()}"
+              >0</span
+            >
+          </td>
+          <td class="text-center">
+            <div class="btn-group" role="group">
+              <a
+                th:href="@{/categories/edit/{id}(id=${category.id})}"
+                class="btn btn-sm btn-outline-warning"
+                title="Edit"
+              >
+                <i class="fa-regular fa-pen-to-square"></i>
+              </a>
+              <a
+                th:href="@{/categories/delete/{id}(id=${category.id})}"
+                class="btn btn-sm btn-outline-danger"
+                title="Delete"
+                onclick="return confirm('Are you sure? This will affect all products in this category.')"
+              >
+                <i class="fa-solid fa-trash"></i>
+              </a>
+            </div>
+          </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(categories)}">
+          <td colspan="5" class="text-center py-4">
+            <i class="fa-solid fa-inbox fa-3x text-muted mb-2"></i>
+            <p class="text-muted mb-0">
+              No categories found. Create your first category to get started!
+            </p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
