@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.tutorial.tutorial.Category.entity.CategoryEntity;
 
 import jakarta.persistence.Entity;
@@ -25,33 +26,47 @@ public class ProductEntity {
     private String name;
     private double price;
     private String image;
+    private long quantity = 0; // default value is 0
     
     @ManyToOne
     @JoinColumn(name = "category_id")
+    @JsonIgnoreProperties("products")
     private CategoryEntity category;
     
     @CreationTimestamp
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+
  
 
 
-    public ProductEntity(String code, String name, double price, String image, CategoryEntity category) {
+    public ProductEntity(String code, String name, double price, String image, CategoryEntity category, long quantity) {
         this.productCode = code;
         this.name = name;
         this.price = price;
         this.image = image;
         this.category = category;
+        this.quantity = quantity;
     }
     // a
-    public ProductEntity(String code, String name, double price, String image) {
+    public ProductEntity(String code, String name, double price, String image, long quantity) {
         this.productCode = code;
         this.name = name;
         this.price = price;
         this.image = image;
+        this.quantity = quantity;
     }
 
+
+    public long getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(long quantity) {
+        this.quantity = quantity;
+    }
     public String getCode() {
         return productCode;
     }

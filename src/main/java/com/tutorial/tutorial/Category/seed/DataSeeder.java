@@ -1,13 +1,14 @@
-package com.tutorial.tutorial.Product.config;
-
+package com.tutorial.tutorial.Category.seed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.tutorial.tutorial.Category.entity.CategoryEntity;
 import com.tutorial.tutorial.Category.repository.CategoryRepository;
 
 @Component
+@Order(1) // Run first before product seeder
 public class DataSeeder implements CommandLineRunner {
 
     @Autowired

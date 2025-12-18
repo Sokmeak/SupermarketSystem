@@ -7,6 +7,8 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,6 +38,21 @@ public class ProductService {
     }
 
     /**
+     * Get products with pagination and filtering
+     */
+    public Page<ProductEntity> getProductsWithPagination(Long categoryId, String keyword, Pageable pageable) {
+        if (keyword != null && categoryId != null) {
+            return productRepository.findByCategoryIdAndNameContainingIgnoreCase(categoryId, keyword, pageable);
+        } else if (keyword != null) {
+            return productRepository.findByNameContainingIgnoreCase(keyword, pageable);
+        } else if (categoryId != null) {
+            return productRepository.findByCategoryId(categoryId, pageable);
+        } else {
+            return productRepository.findAll(pageable);
+        }
+    }
+
+    /**
      * Find product by product code
      */
     public ProductEntity getProductByCode(String productCode) {
@@ -58,7 +75,8 @@ public class ProductService {
             productDTO.getName(),
             productDTO.getPrice(),
             imageUrl,
-            category
+            category,
+            productDTO.getQuantity()
         );
         
         productRepository.save(entity);
@@ -74,6 +92,7 @@ public class ProductService {
             productEntity.setCode(productDTO.getProductCode());
             productEntity.setName(productDTO.getName());
             productEntity.setPrice(productDTO.getPrice());
+            productEntity.setQuantity(productDTO.getQuantity());
 
             // Update category
             if (productDTO.getCategoryId() != null) {
@@ -153,6 +172,6 @@ public class ProductService {
         // Write file
         Files.write(pathImage, image.getBytes());
 
-        return "/files/" + image.getOriginalFilename();
+        return "/images/" + image.getOriginalFilename();
     }
 }

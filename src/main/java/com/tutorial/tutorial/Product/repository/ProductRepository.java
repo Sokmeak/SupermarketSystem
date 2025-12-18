@@ -2,6 +2,8 @@ package com.tutorial.tutorial.Product.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,4 +28,12 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
            "LOWER(p.productCode) LIKE LOWER(CONCAT('%', :keyword, '%')))")
     List<ProductEntity> searchByCategoryAndKeyword(@Param("categoryId") Long categoryId, 
                                                     @Param("keyword") String keyword);
+    
+    // Pagination methods
+    Page<ProductEntity> findByNameContainingIgnoreCase(String keyword, Pageable pageable);
+    Page<ProductEntity> findByCategoryId(Long categoryId, Pageable pageable);
+    Page<ProductEntity> findByCategoryIdAndNameContainingIgnoreCase(Long categoryId, String keyword, Pageable pageable);
+    
+    // Count products by category
+    long countByCategoryId(Long categoryId);
 }

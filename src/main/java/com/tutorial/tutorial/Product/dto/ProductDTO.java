@@ -2,6 +2,8 @@ package com.tutorial.tutorial.Product.dto;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.tutorial.tutorial.Product.entity.ProductEntity;
+
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -22,14 +24,33 @@ public class ProductDTO {
     
     private Long categoryId;
     
+    private Long id;
+    
+    private String imagePath;
+    
+    private long quantity;
+    
     public ProductDTO() {
     }
     
-    public ProductDTO(String proCode, String name, double price, MultipartFile image) {
+    public ProductDTO(String proCode, String name, double price, MultipartFile image, Long categoryId, long quantity) {
         this.productCode = proCode;
         this.name = name;
         this.price = price;
         this.image = image;
+        this.categoryId = categoryId;
+        this.quantity = quantity;
+    }
+    
+    // Constructor for converting ProductEntity to ProductDTO (used in controller)
+    public ProductDTO(ProductEntity entity) {
+        this.id = entity.getId();
+        this.productCode = entity.getCode();
+        this.name = entity.getName();
+        this.price = entity.getPrice();
+        this.imagePath = entity.getImage();
+        this.quantity = entity.getQuantity();
+        this.categoryId = entity.getCategory() != null ? entity.getCategory().getId() : null;
     }
     
     public String getProductCode() {
@@ -70,5 +91,29 @@ public class ProductDTO {
 
     public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
+    }
+    
+    public long getQuantity() {
+        return quantity;
+    }
+    
+    public void setQuantity(long quantity) {
+        this.quantity = quantity;
+    }
+    
+    public Long getId() {
+        return id;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public String getImagePath() {
+        return imagePath;
+    }
+    
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 }

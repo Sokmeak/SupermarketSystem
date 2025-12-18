@@ -3,22 +3,35 @@ package com.tutorial.tutorial.Category.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.tutorial.tutorial.Category.entity.CategoryEntity;
 import com.tutorial.tutorial.Category.repository.CategoryRepository;
+import com.tutorial.tutorial.Product.repository.ProductRepository;
 
 @Service
 public class CategoryService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+    
+    @Autowired
+    private ProductRepository productRepository;
 
     /**
      * Get all categories
      */
     public List<CategoryEntity> getAllCategories() {
         return categoryRepository.findAll();
+    }
+
+    /**
+     * Get categories with pagination
+     */
+    public Page<CategoryEntity> getCategoriesWithPagination(Pageable pageable) {
+        return categoryRepository.findAllWithProducts(pageable);
     }
 
     /**
@@ -49,8 +62,21 @@ public class CategoryService {
 
     /**
      * Delete category
+     * @return true if deleted successfully, false if category has products
      */
-    public void deleteCategory(Long id) {
+    public boolean deleteCategory(Long id) {
+        CategoryEntity category = categoryRepository.findById(id).orElse(null);
+        if (category == null) {
+            return false;
+        }
+        
+        // Check if category has products
+        long productCount = productRepository.countByCategoryId(id);
+        if (productCount > 0) {
+            return false;
+        }
+        
         categoryRepository.deleteById(id);
+        return true;
     }
 }

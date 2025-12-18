@@ -7,6 +7,8 @@ import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.tutorial.tutorial.Product.entity.ProductEntity;
 
 import jakarta.persistence.CascadeType;
@@ -26,8 +28,10 @@ public class CategoryEntity {
     
     private String name;
     private String description;
-    
+
+
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("category")
     private List<ProductEntity> products = new ArrayList<>();
     
     @CreationTimestamp
