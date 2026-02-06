@@ -104,11 +104,12 @@ public class AdminController {
     }
 
     @GetMapping("/admin/users")
-    @Operation(summary = "Get all users", description = "Retrieve list of all users with pagination and optional role filter (admin only)")
+    @Operation(summary = "Get all users", description = "Retrieve list of all users with pagination, search, and optional role filter (admin only)")
     public ResponseEntity<?> getUsers(@RequestParam(defaultValue = "0") int page,
                                       @RequestParam(defaultValue = "10") int size,
                                       @RequestParam(defaultValue = "id") String sortBy,
                                       @RequestParam(defaultValue = "asc") String sortDir,
+                                      @RequestParam(required = false) String keyword,
                                       @RequestParam(required = false) String role,
                                       HttpSession session) {
         UserEntity admin = (UserEntity) session.getAttribute("admin");
@@ -118,7 +119,7 @@ public class AdminController {
 
         Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<UserEntity> users = userService.getAllUsersWithPagination(pageable, role);
+        Page<UserEntity> users = userService.getAllUsersWithPagination(pageable, keyword, role);
         return ResponseEntity.ok(users);
     }
 

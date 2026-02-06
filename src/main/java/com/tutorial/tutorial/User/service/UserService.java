@@ -87,6 +87,10 @@ public class UserService {
     public Optional<UserEntity> getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
+
+    public Optional<UserEntity> getUserById(Long id) {
+        return userRepository.findById(id);
+    }
     
     /**
      * Get all users
@@ -96,10 +100,31 @@ public class UserService {
     }
     
     /**
-     * Get all users with pagination and optional role filter
+     * Get all users with pagination, keyword search, and optional role filter
      */
-    public Page<UserEntity> getAllUsersWithPagination(Pageable pageable, String role) {
-        if (role != null && !role.isEmpty()) {
+    public Page<UserEntity> getAllUsersWithPagination(Pageable pageable, String keyword, String role) {
+        boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+        boolean hasRole = role != null && !role.trim().isEmpty();
+        
+        // Both keyword and role filter
+        if (hasKeyword && hasRole) {
+            try {
+                UserRole userRole = UserRole.valueOf(role.toUpperCase());
+                return userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCaseAndRole(
+                    keyword, keyword, userRole, pageable);
+            } catch (IllegalArgumentException e) {
+                // Invalid role, search without role filter
+                return userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+                    keyword, keyword, pageable);
+            }
+        }
+        // Only keyword search
+        else if (hasKeyword) {
+            return userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+                keyword, keyword, pageable);
+        }
+        // Only role filter
+        else if (hasRole) {
             try {
                 UserRole userRole = UserRole.valueOf(role.toUpperCase());
                 return userRepository.findByRole(userRole, pageable);
@@ -108,6 +133,7 @@ public class UserService {
                 return userRepository.findAll(pageable);
             }
         }
+        // No filters
         return userRepository.findAll(pageable);
     }
     
